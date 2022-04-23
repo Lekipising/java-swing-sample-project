@@ -4,6 +4,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+// About this class
+/*
+This is login screen. Has username and password fields.
+When user clicks login button, it checks if the username and password are correct.
+then shows register screen
+*/
+
 // create a login frame with 2 input fields and 1 button using swing
 public class LoginPage {
     // frame
@@ -65,6 +72,21 @@ public class LoginPage {
         if (user.equals("admin") && pass.equals("admin")) {
             // if correct, show message
             JOptionPane.showMessageDialog(frame, "Login Successful!");
+            Boolean existsInDb = false;
+
+            // REPLACE THIS WITH YOUR CODE to check mysql database
+
+            // close current frame and open registration page if user is not in database
+            // otherwise show the showUsers screen
+            if (!existsInDb) {
+                frame.setVisible(false);
+                Register registerPage = new Register();
+                registerPage.show();
+            } else {
+                frame.setVisible(false);
+                showUsers showUsers = new showUsers();
+                showUsers.show();
+            }
         } else {
             // if incorrect, show message
             JOptionPane.showMessageDialog(frame, "Login Failed!");

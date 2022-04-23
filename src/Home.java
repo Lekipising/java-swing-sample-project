@@ -1,6 +1,13 @@
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
+// about this class
+/*
+This is the first screen to show users.
+They are presented with 2 buttons, signup or login.
+When they click either buttons, they are directed to the next screen.
+*/
+
 public class Home {
     // frame
     private JFrame frame;

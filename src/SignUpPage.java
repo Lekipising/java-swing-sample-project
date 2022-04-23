@@ -81,6 +81,10 @@ public class SignUpPage {
             if (pass.equals(confirmPass)) {
                 // show success message
                 JOptionPane.showMessageDialog(frame, "Sign up successful");
+                // close the frame and open login page
+                frame.dispose();
+                LoginPage loginPage = new LoginPage();
+                loginPage.show();
             } else {
                 // show error message
                 JOptionPane.showMessageDialog(frame, "Password and confirm password do not match");

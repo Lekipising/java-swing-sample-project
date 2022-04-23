@@ -3,6 +3,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+// about this class
+/*
+This screen for registering users. We ask for grade and submit.
+Logic will check for level of grade and assign appropriate level. Modify to match your needs.
+*/
+
 public class Register {
     // frame
     private JFrame frame;
@@ -94,7 +100,17 @@ public class Register {
         ok.setSize(100, 50);
         // position - bottom
         ok.setBounds(10, 110, 100, 50);
-        ok.addActionListener(e -> popUp.dispose());
+        // on click OK open usersShow screen
+        ok.addActionListener(e -> {
+            // close pop up
+            popUp.dispose();
+            // close register screen
+            frame.dispose();
+            // create usersShow screen
+            showUsers usersShow = new showUsers();
+            // show usersShow screen
+            usersShow.show();
+        });
         // size
         label.setSize(100, 50);
         // position

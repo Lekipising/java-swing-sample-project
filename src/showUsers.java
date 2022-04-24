@@ -1,3 +1,8 @@
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -22,8 +27,7 @@ public class showUsers {
     private String[] columnNames = { "Username", "Grade" };
 
     // rows
-    private Object[][] data = { { "user1", "A" }, { "user2", "B" }, { "user3", "C" }, { "user4", "D" },
-            { "user5", "F" } };
+    private Object[][] data = getUsers();
 
     // constructor
     public showUsers() {
@@ -47,6 +51,48 @@ public class showUsers {
         // set frame properties
         frame.setSize(500, 300);
         frame.setLayout(null);
+    }
+
+    // get users from the database and return in form of Object[][]
+    public Object[][] getUsers() {
+        ConnectDatabase connectDatabase = new ConnectDatabase();
+        Connection conn = connectDatabase.connectToDb();
+        // get users from database
+        try {
+            Statement stmt = null;
+
+            String sql = "SELECT * FROM users";
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            // new object of undefined length
+            Object[][] data = new Object[rs.getFetchSize()][2];
+            System.out.println("Size " + rs.getFetchSize());
+
+            // get data from database
+            while (rs.next()) {
+                // get username
+                String username = rs.getString("username");
+                // get grade
+                String grade = rs.getString("major");
+                // add username and grade to data
+                data[rs.getRow()][0] = username;
+                data[rs.getRow()][1] = grade;
+
+            }
+            // return data
+            return data;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        // return users in form of Object[][]
+        return data;
     }
 
     // show

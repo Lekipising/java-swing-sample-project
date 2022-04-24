@@ -1,3 +1,9 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -57,7 +63,7 @@ public class SignUpPage {
         signUp.setBounds(10, 160, 100, 50);
 
         // set frame properties
-        frame.setSize(500, 300);
+        frame.setSize(700, 500);
         frame.setLayout(null);
     }
 
@@ -79,8 +85,8 @@ public class SignUpPage {
         } else {
             // check if password and confirm password are the same
             if (pass.equals(confirmPass)) {
-                // show success message
-                JOptionPane.showMessageDialog(frame, "Sign up successful");
+
+                saveUser(user, pass);
                 // close the frame and open login page
                 frame.dispose();
                 LoginPage loginPage = new LoginPage();
@@ -88,6 +94,31 @@ public class SignUpPage {
             } else {
                 // show error message
                 JOptionPane.showMessageDialog(frame, "Password and confirm password do not match");
+            }
+        }
+    }
+
+    // save new user to the database
+    public void saveUser(String username, String pass) {
+        ConnectDatabase connectDatabase = new ConnectDatabase();
+        Connection conn = connectDatabase.connectToDb();
+
+        // insert into database
+        try {
+            System.out.println("Inserting records into the table...");
+
+            String sql = "INSERT INTO users (username, password) VALUES ('" + username + "', '" + pass + "')";
+            conn.createStatement().executeUpdate(sql);
+            System.out.println("Inserted records into the table");
+            // show success message
+            JOptionPane.showMessageDialog(frame, "Sign up successful");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
     }

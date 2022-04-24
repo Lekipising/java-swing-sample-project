@@ -1,3 +1,8 @@
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -39,7 +44,13 @@ public class LoginPage {
         login.setSize(100, 50);
 
         // call method login when button is clicked
-        login.addActionListener(e -> login());
+        login.addActionListener(e -> {
+            try {
+                login();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+        });
 
         // add components to frame
         frame.add(username);
@@ -64,23 +75,22 @@ public class LoginPage {
     }
 
     // event handler for button
-    public void login() {
+    public void login() throws SQLException {
         // get username and password
         String user = username.getText();
         String pass = password.getText();
         // check if username and password are correct
-        if (user.equals("admin") && pass.equals("admin")) {
+
+        if (loginProcess(user, pass)) {
             // if correct, show message
             JOptionPane.showMessageDialog(frame, "Login Successful!");
-            Boolean existsInDb = false;
-
-            // REPLACE THIS WITH YOUR CODE to check mysql database
+            Boolean existsInDb = checkRegistrationStatus(user);
 
             // close current frame and open registration page if user is not in database
             // otherwise show the showUsers screen
             if (!existsInDb) {
                 frame.setVisible(false);
-                Register registerPage = new Register();
+                Register registerPage = new Register(user);
                 registerPage.show();
             } else {
                 frame.setVisible(false);
@@ -91,6 +101,79 @@ public class LoginPage {
             // if incorrect, show message
             JOptionPane.showMessageDialog(frame, "Login Failed!");
         }
+    }
+
+    // check if username exists in database
+    public boolean loginProcess(String user, String pass) {
+        ConnectDatabase connectDatabase = new ConnectDatabase();
+        Connection conn = connectDatabase.connectToDb();
+
+        // check if username exists in database
+        // if exists and password is correct, return true
+        // if not, return false
+
+        String sql = "SELECT * FROM users WHERE username = '" + user + "'";
+        try {
+            // create statement
+            Statement stmt = conn.createStatement();
+            // execute query
+            ResultSet rs = stmt.executeQuery(sql);
+            // check if username exists
+            if (rs.next()) {
+                // check if password is correct
+                if (rs.getString("password").equals(pass)) {
+                    // return major column
+                    return true;
+                }
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+
+    }
+
+    // check if logged in user is registered in database
+    public Boolean checkRegistrationStatus(String rs) throws SQLException {
+        ConnectDatabase connectDatabase = new ConnectDatabase();
+        Connection conn = connectDatabase.connectToDb();
+
+        // check if column major is null
+        // if null, user is not registered
+        // if not null, user is registered
+
+        String sql = "SELECT major FROM users WHERE username = '" + rs + "'";
+        try {
+            // create statement
+            Statement stmt = conn.createStatement();
+            // execute query
+            ResultSet rs2 = stmt.executeQuery(sql);
+            // check if major is null
+            if (rs2.next()) {
+                if (rs2.getString("major") == null) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return true;
     }
 
     // show frame

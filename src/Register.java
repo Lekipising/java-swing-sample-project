@@ -1,3 +1,6 @@
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -18,7 +21,7 @@ public class Register {
     private JButton register;
 
     // constructor
-    public Register() {
+    public Register(String username) {
         // create frame
         frame = new JFrame("Register");
         // create text fields
@@ -32,7 +35,13 @@ public class Register {
         register.setSize(100, 50);
 
         // call method register when button is clicked
-        register.addActionListener(e -> register());
+        register.addActionListener(e -> {
+            try {
+                register(username);
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+        });
 
         // add components to frame
         frame.add(grade);
@@ -59,7 +68,7 @@ public class Register {
     // register - grade is below 10 set to "F", between 10 and 20 set to "D",
     // between 20 and 30 set to "C", between 30 and 40 set to "B", between 40 and 50
     // set to "A" - show pop up with grade and print
-    private void register() {
+    private void register(String username) throws SQLException {
         // get grade
         String gradeString = grade.getText();
         // convert to int
@@ -89,6 +98,7 @@ public class Register {
             // set grade to "A"
             gradeString = "A";
         }
+        updateMajor(gradeString, username);
         // create pop up
         JFrame popUp = new JFrame("Grade");
         // create label
@@ -123,6 +133,25 @@ public class Register {
         popUp.setSize(300, 200);
         popUp.setLayout(null);
         popUp.setVisible(true);
+    }
+
+    // method to update major column in database
+    public void updateMajor(String major, String username) throws SQLException {
+        // create connection
+        ConnectDatabase connectDatabase = new ConnectDatabase();
+        Connection conn = connectDatabase.connectToDb();
+        // create statement
+        java.sql.Statement stmt = null;
+        try {
+            // create statement
+            stmt = conn.createStatement();
+            // update major column in database
+            String sql = "UPDATE users SET major = '" + major + "' WHERE username = '" + username + "'";
+            // execute query
+            stmt.executeUpdate(sql);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
 }

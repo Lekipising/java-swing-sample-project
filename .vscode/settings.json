@@ -3,6 +3,7 @@
   "java.project.outputPath": "bin",
   "java.project.referencedLibraries": [
     "lib/**/*.jar",
-    "/home/liplan/Downloads/mysql-connector-java-8.0.27.jar"
+    "/home/liplan/Downloads/mysql-connector-java-8.0.27.jar",
+    "/home/liplan/Downloads/dotenv-java-2.2.2.jar"
   ]
 }

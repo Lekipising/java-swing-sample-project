@@ -2,14 +2,17 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import io.github.cdimascio.dotenv.Dotenv;
+
 public class ConnectDatabase {
     public Connection connectToDb() {
+        Dotenv dotenv = Dotenv.load();
         Connection conn = null;
         try {
             // db parameters
-            String url = "jdbc:mysql://us-cdbr-east-05.cleardb.net:3306/heroku_a2e20695e59bc79";
-            String user = "bec06936de5fb6";
-            String password = "2e12d093";
+            String url = dotenv.get("DB_URL");
+            String user = dotenv.get("DB_USER");
+            String password = dotenv.get("DB_PASS");
 
             System.out.println("Connecting to database...");
 

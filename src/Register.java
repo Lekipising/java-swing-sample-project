@@ -29,7 +29,7 @@ public class Register {
         // size
         grade.setSize(100, 50);
         // placeholder
-        grade.setText("Grade");
+        grade.setText("Major");
         // create button
         register = new JButton("Register");
         register.setSize(100, 50);
@@ -73,6 +73,7 @@ public class Register {
         String gradeString = grade.getText();
         // convert to int
         int gradeInt = Integer.parseInt(gradeString);
+        // TODO: ADD ACTUAL major - eg 16 - 20 is CS, etc
         // if grade is below 10
         if (gradeInt < 10) {
             // set grade to "F"
@@ -100,9 +101,9 @@ public class Register {
         }
         updateMajor(gradeString, username);
         // create pop up
-        JFrame popUp = new JFrame("Grade");
+        JFrame popUp = new JFrame("Major");
         // create label
-        JLabel label = new JLabel("Grade: " + gradeString);
+        JLabel label = new JLabel("Major: " + gradeString);
 
         // ok button
         JButton ok = new JButton("OK");

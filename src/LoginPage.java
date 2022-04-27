@@ -5,6 +5,7 @@ import java.sql.Statement;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -25,6 +26,7 @@ public class LoginPage {
     private JPasswordField password;
     // button
     private JButton login;
+    private JLabel loading;
 
     // constructor
     public LoginPage() {
@@ -57,7 +59,13 @@ public class LoginPage {
         frame.add(password);
         frame.add(login);
 
-        // positioning
+        loading = new JLabel("Loading...");
+        loading.setSize(100, 50);
+        // bounds - bottom
+        loading.setBounds(300, 500, 100, 50);
+        // hide
+        loading.setVisible(false);
+        frame.add(loading);
 
         // username - top left
         username.setBounds(10, 10, 100, 50);
@@ -69,13 +77,14 @@ public class LoginPage {
         login.setBounds(10, 110, 100, 50);
 
         // set frame properties
-        frame.setSize(500, 300);
+        frame.setSize(800, 700);
         frame.setLayout(null);
         frame.setVisible(true);
     }
 
     // event handler for button
     public void login() throws SQLException {
+        loading.setVisible(true);
         // get username and password
         String user = username.getText();
         String pass = password.getText();
@@ -89,6 +98,7 @@ public class LoginPage {
             // close current frame and open registration page if user is not in database
             // otherwise show the showUsers screen
             if (!existsInDb) {
+                loading.setVisible(false);
                 frame.setVisible(false);
                 Register registerPage = new Register(user);
                 registerPage.show();

@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 // about this class
@@ -20,12 +21,21 @@ public class Register {
     // button
     private JButton register;
 
+    private JLabel loading;
+
     // constructor
     public Register(String username) {
         // create frame
         frame = new JFrame("Register");
         // create text fields
         grade = new JTextField(10);
+        loading = new JLabel("Loading...");
+        loading.setSize(100, 50);
+        // bounds - bottom
+        loading.setBounds(300, 600, 100, 50);
+        // hide
+        loading.setVisible(false);
+        frame.add(loading);
         // size
         grade.setSize(100, 50);
         // placeholder
@@ -56,7 +66,7 @@ public class Register {
         register.setBounds(10, 60, 100, 50);
 
         // set frame properties
-        frame.setSize(500, 300);
+        frame.setSize(800, 800);
         frame.setLayout(null);
     }
 
@@ -75,29 +85,29 @@ public class Register {
         int gradeInt = Integer.parseInt(gradeString);
         // TODO: ADD ACTUAL major - eg 16 - 20 is CS, etc
         // if grade is below 10
-        if (gradeInt < 10) {
-            // set grade to "F"
-            gradeString = "F";
+        if (gradeInt < 11) {
+            // show pop saying "Not allowed"
+            JOptionPane.showMessageDialog(frame, "Not admitted");
         }
         // if grade is between 10 and 20
-        else if (gradeInt >= 10 && gradeInt <= 20) {
+        else if (gradeInt >= 12 && gradeInt <= 14) {
             // set grade to "D"
-            gradeString = "D";
+            gradeString = "Business Studies";
         }
         // if grade is between 20 and 30
-        else if (gradeInt >= 20 && gradeInt <= 30) {
+        else if (gradeInt >= 15 && gradeInt <= 17) {
             // set grade to "C"
-            gradeString = "C";
+            gradeString = "Global Challenges";
         }
         // if grade is between 30 and 40
-        else if (gradeInt >= 30 && gradeInt <= 40) {
+        else if (gradeInt >= 18 && gradeInt <= 20) {
             // set grade to "B"
-            gradeString = "B";
+            gradeString = "Computer Studies";
         }
         // if grade is between 40 and 50
-        else if (gradeInt >= 40 && gradeInt <= 50) {
-            // set grade to "A"
-            gradeString = "A";
+        else if (gradeInt >= 21) {
+            // show pop saying "Not allowed"
+            JOptionPane.showMessageDialog(frame, "Max is 20");
         }
         updateMajor(gradeString, username);
         // create pop up
@@ -138,6 +148,7 @@ public class Register {
 
     // method to update major column in database
     public void updateMajor(String major, String username) throws SQLException {
+        loading.setVisible(true);
         // create connection
         ConnectDatabase connectDatabase = new ConnectDatabase();
         Connection conn = connectDatabase.connectToDb();
@@ -146,13 +157,63 @@ public class Register {
         try {
             // create statement
             stmt = conn.createStatement();
-            // update major column in database
-            String sql = "UPDATE users SET major = '" + major + "' WHERE username = '" + username + "'";
+            String rollNum = generateRollNum();
+            // update major and rollNum columns in database
+            String sql = "UPDATE users SET major = '" + major + "', rollNum = '" + rollNum + "' WHERE username = '"
+                    + username + "'";
             // execute query
             stmt.executeUpdate(sql);
+            loading.setVisible(false);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    // generate rollNum - format - 2022/01, 2022/02, etc - 01, 02, are integers to
+    // be incremented
+    public String generateRollNum() {
+        // check last rollNum
+        ConnectDatabase connectDatabase = new ConnectDatabase();
+        Connection conn = connectDatabase.connectToDb();
+
+        // get all rollNums
+        java.sql.Statement stmt = null;
+        try {
+            stmt = conn.createStatement();
+            String sql = "SELECT rollNum FROM users";
+            java.sql.ResultSet rs = stmt.executeQuery(sql);
+            // get last rollNum
+            String lastRollNum = "";
+            while (rs.next()) {
+
+                lastRollNum = rs.getString("rollNum");
+            }
+            if (lastRollNum == null) {
+                lastRollNum = "2022/01";
+                return lastRollNum;
+            }
+            // get last rollNum year
+            String lastRollNumYear = lastRollNum.substring(0, 4);
+            // get last rollNum month
+            String lastRollNumMonth = lastRollNum.substring(5, 7);
+            // convert last rollNum month to int
+            int lastRollNumMonthInt = Integer.parseInt(lastRollNumMonth);
+            // increment last rollNum month
+            lastRollNumMonthInt++;
+            // return last rollNum year and last rollNum month
+            return lastRollNumYear + "/" + lastRollNumMonthInt;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return null;
     }
 
 }

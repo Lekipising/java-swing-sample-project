@@ -52,7 +52,7 @@ public class Home {
         login.setBounds(10, 60, 100, 50);
 
         // set frame properties
-        frame.setSize(500, 300);
+        frame.setSize(800, 700);
         frame.setLayout(null);
     }
 

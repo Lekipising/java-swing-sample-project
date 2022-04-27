@@ -6,6 +6,7 @@ import java.sql.Statement;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
@@ -18,6 +19,9 @@ public class SignUpPage {
     private JTextField confirmPassword;
     // button
     private JButton signUp;
+
+    // loading label
+    private JLabel loading;
 
     // constructor
     public SignUpPage() {
@@ -39,8 +43,19 @@ public class SignUpPage {
         signUp = new JButton("Sign Up");
         signUp.setSize(100, 50);
 
+        loading = new JLabel("Loading...");
+        loading.setSize(100, 50);
+        // bounds - bottom
+        loading.setBounds(300, 500, 100, 50);
+        // hide
+        loading.setVisible(false);
+        frame.add(loading);
+
         // call method signUp when button is clicked
-        signUp.addActionListener(e -> signUp());
+        signUp.addActionListener(e -> {
+            loading.setVisible(true);
+            signUp();
+        });
 
         // add components to frame
         frame.add(username);
@@ -63,7 +78,7 @@ public class SignUpPage {
         signUp.setBounds(10, 160, 100, 50);
 
         // set frame properties
-        frame.setSize(700, 500);
+        frame.setSize(800, 700);
         frame.setLayout(null);
     }
 
@@ -74,6 +89,7 @@ public class SignUpPage {
 
     // method to sign up
     public void signUp() {
+        loading.setVisible(true);
         // get username, password, confirm password
         String user = username.getText();
         String pass = password.getText();
@@ -87,6 +103,7 @@ public class SignUpPage {
             if (pass.equals(confirmPass)) {
 
                 saveUser(user, pass);
+                loading.setVisible(false);
                 // close the frame and open login page
                 frame.dispose();
                 LoginPage loginPage = new LoginPage();
